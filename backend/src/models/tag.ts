@@ -1,19 +1,19 @@
-import { BaseModel } from './base';
+import {BaseModel} from "./base";
 
 export class Tag extends BaseModel {
-  static tableName = 'tag';
+	static tableName = "tag";
 
-  name!: string;
-  memeId!: string;
+	name!: string;
+	memeId!: string;
 
-  static relationMappings = {
-    meme: {
-      relation: BaseModel.BelongsToOneRelation,
-      modelClass: 'Meme',
-      join: {
-        from: 'tags.meme_id',
-        to: 'memes.id'
-      }
-    }
-  };
-} 
+	static relationMappings = {
+		meme: {
+			relation: BaseModel.BelongsToOneRelation,
+			modelClass: "Meme",
+			join: {
+				from: "tags.meme_id",
+				to: "memes.id",
+			},
+		},
+	};
+}
