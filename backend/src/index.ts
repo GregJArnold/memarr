@@ -7,6 +7,7 @@ import { initErrorReporting } from './utils/errorReporting';
 import './config/database';
 import { createSchema } from './graphql';
 import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';
+import { authenticate, AuthContext } from './middleware/auth';
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -37,10 +38,7 @@ async function startServer() {
     json(),
     graphqlUploadExpress(),
     expressMiddleware(server, {
-      context: async ({ req }) => {
-        // TODO: Add authentication context
-        return { user: null };
-      }
+      context: async ({ req }) => authenticate(req),
     })
   );
 
