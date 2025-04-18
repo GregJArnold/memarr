@@ -5,8 +5,7 @@ import { json } from 'body-parser';
 import cors from 'cors';
 import { initErrorReporting } from './utils/errorReporting';
 import './config/database';
-import { typeDefs, resolvers } from './resolvers/meme.ts';
-import { makeExecutableSchema } from '@graphql-tools/schema';
+import { createSchema } from './graphql';
 import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';
 
 const app = express();
@@ -22,15 +21,9 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-// Create executable schema
-const schema = makeExecutableSchema({
-  typeDefs,
-  resolvers
-});
-
 // Create Apollo Server
 const server = new ApolloServer({
-  schema
+  schema: createSchema()
 });
 
 // Start the server

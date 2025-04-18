@@ -1,15 +1,10 @@
-import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { FileUploadService } from '../services/fileUpload';
 import { Meme } from '../models/meme';
 import gql from 'graphql-tag';
-import { DateTimeResolver, DateTimeTypeDefinition } from 'graphql-scalars';
 
 const fileUploadService = new FileUploadService();
 
 export const typeDefs = gql`
-  ${DateTimeTypeDefinition}
-  scalar Upload
-
   type Meme {
     id: ID!
     templateId: ID
@@ -25,9 +20,6 @@ export const typeDefs = gql`
 `;
 
 export const resolvers = {
-  Upload: GraphQLUpload,
-  DateTime: DateTimeResolver,
-
   Mutation: {
     uploadMeme: async (_: any, { file }: { file: any }, { user }: { user: any }) => {
       if (!user) {

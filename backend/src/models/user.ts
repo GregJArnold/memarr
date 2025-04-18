@@ -3,8 +3,11 @@ import { BaseModel } from './base';
 export class User extends BaseModel {
   static tableName = 'user';
 
+  id!: string;
   email!: string;
-  passwordHash!: string;
+  password!: string;
+  createdAt!: Date;
+  updatedAt!: Date;
 
   static relationMappings = {
     memes: {
