@@ -2,8 +2,9 @@ import gql from "graphql-tag";
 import {Transaction} from "objection";
 import {User} from "../models/user";
 import bcrypt from "bcrypt";
-import {withTransaction} from "../utils/transaction";
+import {withTransaction} from "../middleware/transaction";
 import jwt from "jsonwebtoken";
+import {Context, TransactionContext} from "../context";
 
 export const typeDefs = gql`
 	type User {
@@ -30,7 +31,7 @@ export const typeDefs = gql`
 
 export const resolvers = {
 	Query: {
-		me: async (_: any, __: any, {user}: {user: any}) => {
+		me: async (_: unknown, __: unknown, {user}: Context) => {
 			if (!user) {
 				throw new Error("Not authenticated");
 			}
@@ -40,7 +41,7 @@ export const resolvers = {
 
 	Mutation: {
 		signUp: withTransaction(
-			async (_: any, {email, password}: {email: string; password: string}, {trx}: {trx: Transaction}) => {
+			async (_: unknown, {email, password}: {email: string; password: string}, {trx}: TransactionContext) => {
 				const existingUser = await User.query(trx).findOne({email});
 				if (existingUser) {
 					throw new Error("Email already registered");
@@ -57,7 +58,7 @@ export const resolvers = {
 			}
 		),
 
-		login: async (_: any, {email, password}: {email: string; password: string}) => {
+		login: async (_: unknown, {email, password}: {email: string; password: string}) => {
 			const user = await User.query().findOne({email});
 			if (!user) {
 				throw new Error("Invalid email or password");

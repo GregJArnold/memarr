@@ -1,20 +1,17 @@
 import {Request} from "express";
 import jwt from "jsonwebtoken";
 import {User} from "../models/user";
+import {Context} from "../context";
 
-export interface AuthContext {
-	user: User | null;
-}
-
-export const authenticate = async (req: Request): Promise<AuthContext> => {
+export const authenticate = async (req: Request): Promise<Context> => {
 	const authHeader = req.headers.authorization;
 	if (!authHeader) {
-		return {user: null};
+		return {};
 	}
 
 	const token = authHeader.replace("Bearer ", "");
 	if (!token) {
-		return {user: null};
+		return {};
 	}
 
 	try {
