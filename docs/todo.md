@@ -9,14 +9,14 @@ This plan outlines the development of the Meme Library Search Web App as specifi
 **ID**: T1  
 **Context**: Establish the foundational development environment to ensure consistent local self-hosting and collaboration. This includes version control, CI/CD, and monitoring setup.  
 **Dependencies**: None  
-- [ ] **T1.1**: Create project structure
+- [x] **T1.1**: Create project structure
   - Set up root directories: `/frontend` (React), `/backend` (Node.js), `/docs` (documentation).
   - Initialize `package.json` for both frontend and backend.
   - Set up `.gitignore` for Node.js, React, and PostgreSQL as needed in those directories.
-- [ ] **T1.2**: Configure CI/CD with GitHub Actions
+- [x] **T1.2**: Configure CI/CD with GitHub Actions
   - Create a GitHub Actions workflow for linting, testing, and building the app.
   - Ensure workflows run on pull requests and master branch pushes.
-- [ ] **T1.3**: Set up Glitchtip for error tracking
+- [x] **T1.3**: Set up Glitchtip for error tracking
   - Install Glitchtip locally or use a self-hosted instance.
   - Configure error reporting for Node.js and React.
 
@@ -24,20 +24,20 @@ This plan outlines the development of the Meme Library Search Web App as specifi
 **ID**: T2  
 **Context**: Build the core backend infrastructure, including the Node.js server, GraphQL API, and PostgreSQL database, to support meme storage and metadata management.  
 **Dependencies**: T1  
-- [ ] **T2.1**: Initialize Node.js server
+- [x] **T2.1**: Initialize Node.js server
   - Set up a Node.js project with Express and Apollo Server for GraphQL.
   - Create a basic `/health` endpoint to verify server status.
-- [ ] **T2.2**: Configure PostgreSQL database
+- [x] **T2.2**: Configure PostgreSQL database
   - Install PostgreSQL locally and create a database for the app.
   - Set up a connection using the Objection ORM.
-- [ ] **T2.3**: Define initial database schema
+- [x] **T2.3**: Define initial database schema
   - Create tables for:
     - Users (ID, email, hashed password).
     - Memes (ID, file path, user ID, upload timestamp).
     - Tags (ID, name, meme ID).
     - Events (ID, type, meme ID, timestamp, description).
   - Ensure foreign key relationships.
-- [ ] **T2.4**: Set up local file storage
+- [x] **T2.4**: Set up local file storage
   - Create a `/storage` directory for meme images.
   - Implement a basic file upload endpoint to save images locally.
 
@@ -45,19 +45,19 @@ This plan outlines the development of the Meme Library Search Web App as specifi
 **ID**: T3  
 **Context**: Enable user sign-up and login using email-based authentication to secure access to the meme library. OAuth for X will be added later.  
 **Dependencies**: T2  
-- [ ] **T3.1**: Create user sign-up endpoint
+- [x] **T3.1**: Create user sign-up endpoint
   - Implement a GraphQL mutation for user registration (email, password).
   - Hash passwords using bcrypt before storing.
-- [ ] **T3.2**: Create user login endpoint
+- [x] **T3.2**: Create user login endpoint
   - Implement a GraphQL mutation for login, returning a JWT token.
   - Validate credentials and issue token with a 24-hour expiry.
-- [ ] **T3.3**: Add authentication middleware
+- [x] **T3.3**: Add authentication middleware
   - Create middleware to verify JWT tokens for protected GraphQL queries/mutations.
   - Apply to all endpoints except `/health`, sign-up, and login.
 
 ### Task 4: Develop AI Classification Module
 **ID**: T4  
-**Context**: Integrate an AI model to classify meme templates and extract text blocks, forming the core of the app’s functionality. Use a placeholder OpenAI-compatible model for local testing.  
+**Context**: Integrate an AI model to classify meme templates and extract text blocks, forming the core of the app's functionality. Use a placeholder OpenAI-compatible model for local testing.  
 **Dependencies**: T2  
 - [ ] **T4.1**: Set up AI model integration
   - Choose a local or self-hosted AI model (e.g., Hugging Face model for image classification and OCR).
@@ -92,29 +92,29 @@ This plan outlines the development of the Meme Library Search Web App as specifi
 **ID**: T6  
 **Context**: Build the React frontend to provide a user interface for meme uploads, library display, and navigation.  
 **Dependencies**: T1  
-- [ ] **T6.1**: Initialize React project
+- [x] **T6.1**: Initialize React project
   - Set up a React project with Vite.
   - Install Tailwind CSS and configure it.
-- [ ] **T6.2**: Create basic layout
+- [x] **T6.2**: Create basic layout
   - Implement a navigation bar with links to Home, Library, and Activity.
   - Add a main content area for page rendering.
-- [ ] **T6.3**: Set up Apollo Client
+- [x] **T6.3**: Set up Apollo Client
   - Install Apollo Client for GraphQL queries/mutations.
   - Configure to connect to the backend GraphQL API.
-- [ ] **T6.4**: Implement routing
+- [x] **T6.4**: Implement routing
   - Use React Router to handle routes for Home, Library, Activity, and Login/Sign-up pages.
 
 ### Task 7: Implement Login/Sign-Up UI
 **ID**: T7  
 **Context**: Create frontend pages for user authentication, integrating with the backend API.  
 **Dependencies**: T3, T6  
-- [ ] **T7.1**: Build sign-up page
+- [x] **T7.1**: Build sign-up page
   - Create a form with email and password fields.
   - Call the sign-up mutation and store the JWT token in local storage.
-- [ ] **T7.2**: Build login page
+- [x] **T7.2**: Build login page
   - Create a form with email and password fields.
   - Call the login mutation, store the JWT, and redirect to the Library page.
-- [ ] **T7.3**: Add auth state management
+- [x] **T7.3**: Add auth state management
   - Use Context API to manage logged-in state.
   - Protect routes (e.g., Library, Activity) to redirect unauthenticated users to Login.
 
@@ -227,7 +227,7 @@ This plan outlines the development of the Meme Library Search Web App as specifi
   - Ensure failures are silently ignored.
 - [ ] **T14.3**: Log re-scanning events
   - Add events to the Events table for successful re-classifications.
-  - Update the meme’s metadata (remove "failed analysis" tag if successful).
+  - Update the meme's metadata (remove "failed analysis" tag if successful).
 - [ ] **T14.4**: Test re-scanning
   - Upload a meme that fails classification, simulate an AI update, and verify re-scanning behavior.
 
@@ -257,8 +257,14 @@ This plan outlines the development of the Meme Library Search Web App as specifi
   - Include sample template names and text block descriptions in the modal.
   - Use placeholder text to guide users.
 - [ ] **T16.2**: Improve modal design
-  - Use
-# Step-by-Step Plan to Build Meme Library Search Web App (Continued)
+  - Use Tailwind CSS to make the modal visually appealing (e.g., clean layout, consistent colors).
+  - Add clear labels for template name and description fields, with a separate "Submit to Developers" button.
+- [ ] **T16.3**: Add validation feedback
+  - Validate that the template name is non-empty before submission.
+  - Show a friendly error message (e.g., "Please provide a template name") if validation fails.
+- [ ] **T16.4**: Test modal usability
+  - Conduct usability testing with 3–5 users to ensure the modal is intuitive.
+  - Iterate based on feedback (e.g., adjust wording or layout).
 
 ## Phase 3: Polish and Scale (2 months, continued)
 
@@ -267,7 +273,7 @@ This plan outlines the development of the Meme Library Search Web App as specifi
 **Context**: Improve the user experience of the failed classification modal to make it more intuitive and guide users in submitting new meme templates. This enhances user engagement and submission quality.  
 **Dependencies**: T8 (Meme Upload UI)  
 - [ ] **T16.1**: Add example descriptions
-  - Include sample template names (e.g., "Distracted Boyfriend") and text block descriptions (e.g., "Top text: Girlfriend’s complaint, Bottom text: Boyfriend’s distraction") in the modal.
+  - Include sample template names (e.g., "Distracted Boyfriend") and text block descriptions (e.g., "Top text: Girlfriend's complaint, Bottom text: Boyfriend's distraction") in the modal.
   - Use placeholder text in input fields to guide users.
 - [ ] **T16.2**: Improve modal design
   - Apply Tailwind CSS to make the modal visually appealing (e.g., clean layout, consistent colors).
@@ -281,7 +287,7 @@ This plan outlines the development of the Meme Library Search Web App as specifi
 
 ### Task 17: Implement X Authentication and Posting
 **ID**: T17  
-**Context**: Enable users to authenticate via X and post memes to X as part of messages, fulfilling the PRD’s integration requirement.  
+**Context**: Enable users to authenticate via X and post memes to X as part of messages, fulfilling the PRD's integration requirement.  
 **Dependencies**: T3 (User Authentication), T7 (Login/Sign-Up UI), T9 (Basic Search Functionality)  
 - [ ] **T17.1**: Set up X OAuth authentication
   - Integrate X API for OAuth 2.0 login using the X developer portal.
@@ -304,7 +310,7 @@ This plan outlines the development of the Meme Library Search Web App as specifi
 **Context**: Enhance the developer review interface to streamline the process of adding new meme templates to the AI model, improving turnaround time for user submissions.  
 **Dependencies**: T11 (Developer Submission Pipeline)  
 - [ ] **T18.1**: Add template update endpoint
-  - Create a GraphQL mutation (admin-only) to add a new template to the AI model’s database.
+  - Create a GraphQL mutation (admin-only) to add a new template to the AI model's database.
   - Store template metadata (name, text block rules) in a Templates table.
 - [ ] **T18.2**: Enhance review interface
   - Add fields to the developer review app to input template name and text block rules based on user submissions.
@@ -353,7 +359,7 @@ This plan outlines the development of the Meme Library Search Web App as specifi
 
 ### Task 21: Monitor AI and Submission Performance
 **ID**: T21  
-**Context**: Continuously track the AI model’s accuracy and user submission quality to maintain a high-quality meme classification system.  
+**Context**: Continuously track the AI model's accuracy and user submission quality to maintain a high-quality meme classification system.  
 **Dependencies**: T18 (Improve Developer Tools), T19 (Conduct User Testing)  
 - [ ] **T21.1**: Set up AI performance metrics
   - Log classification accuracy (e.g., correct vs. failed classifications) in Glitchtip.
@@ -365,7 +371,7 @@ This plan outlines the development of the Meme Library Search Web App as specifi
   - Establish a biweekly process to review submissions and retrain the AI model.
   - Test updated model before deployment.
 - [ ] **T21.4**: Notify users of new templates
-  - Add a notification on the activity page when a user’s submitted template is added (e.g., “Your template ‘X’ is now supported!”).
+  - Add a notification on the activity page when a user's submitted template is added (e.g., "Your template 'X' is now supported!").
 
 ### Task 22: Add Template Suggestion Feature
 **ID**: T22  
@@ -375,13 +381,13 @@ This plan outlines the development of the Meme Library Search Web App as specifi
   - Implement a simple algorithm (e.g., cosine similarity on template metadata) to find related templates.
   - Store similarity scores in the Templates table.
 - [ ] **T22.2**: Add suggestion endpoint
-  - Create a GraphQL query to return suggested templates based on a meme’s template or search query.
+  - Create a GraphQL query to return suggested templates based on a meme's template or search query.
   - Limit to 3–5 suggestions.
 - [ ] **T22.3**: Build suggestion UI
   - Display suggested templates below search results or on the meme detail page.
   - Use thumbnails and template names, clickable to view related memes.
 - [ ] **T22.4**: Test suggestions
-  - Verify that suggestions are relevant (e.g., “Distracted Boyfriend” suggests “Drake Hotline Bling”).
+  - Verify that suggestions are relevant (e.g., "Distracted Boyfriend" suggests "Drake Hotline Bling").
   - Adjust algorithm based on user feedback.
 
 ### Task 23: Implement Bulk Tagging
@@ -393,9 +399,9 @@ This plan outlines the development of the Meme Library Search Web App as specifi
   - Validate that all memes exist and belong to the user.
 - [ ] **T23.2**: Build bulk tagging UI
   - Add a checkbox selection mode to the library/search results grid.
-  - Include a “Tag Selected” button that opens a tag input field.
+  - Include a "Tag Selected" button that opens a tag input field.
 - [ ] **T23.3**: Log bulk tagging events
-  - Add an event to the Events table for bulk tagging (e.g., “Tagged 5 memes with ‘funny’”).
+  - Add an event to the Events table for bulk tagging (e.g., "Tagged 5 memes with 'funny'").
 - [ ] **T23.4**: Test bulk tagging
   - Verify that tags are applied correctly to multiple memes.
   - Ensure the UI is intuitive and handles edge cases (e.g., no memes selected).
