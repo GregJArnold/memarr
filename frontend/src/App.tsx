@@ -7,7 +7,7 @@ import {Home} from "./pages/Home";
 import {Library} from "./pages/Library";
 import {Activity} from "./pages/Activity";
 import {Login} from "./pages/Login";
-import {SignUp} from "./pages/SignUp";
+import {Signup} from "./pages/Signup";
 import {Profile} from "./pages/Profile";
 import {Settings} from "./pages/Settings";
 import {Create} from "./pages/Create";
@@ -25,7 +25,7 @@ export const App = () => {
 							<Route path="/library" element={<Library />} />
 							<Route path="/activity" element={<Activity />} />
 							<Route path="/login" element={<Login />} />
-							<Route path="/signup" element={<SignUp />} />
+							<Route path="/signup" element={<Signup />} />
 							<Route path="/profile" element={<Profile />} />
 							<Route path="/settings" element={<Settings />} />
 							<Route path="/create" element={<Create />} />

@@ -1,10 +1,82 @@
+import {useState} from "react";
+import {gql, useQuery} from "@apollo/client";
+import {
+	Box,
+	Container,
+	Grid,
+	Paper,
+	Typography,
+	TextField,
+	Card,
+	CardMedia,
+	CardContent,
+	CardActions,
+	Button,
+} from "@mui/material";
+
+const GET_MEMES_QUERY = gql`
+	query GetMemes {
+		memes {
+			id
+			url
+			title
+			createdAt
+		}
+	}
+`;
+
 export const Library = () => {
+	const [searchQuery, setSearchQuery] = useState("");
+	const {data, loading} = useQuery(GET_MEMES_QUERY);
+
+	const filteredMemes =
+		data?.memes?.filter((meme: any) => meme.title.toLowerCase().includes(searchQuery.toLowerCase())) || [];
+
 	return (
-		<div className="container mx-auto px-4">
-			<h1 className="text-3xl font-bold text-gray-900 mb-6">My Meme Library</h1>
-			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-				{/* Meme cards will be added here */}
-			</div>
-		</div>
+		<Container maxWidth="lg">
+			<Box sx={{mt: 4}}>
+				<Typography variant="h3" component="h1" gutterBottom>
+					My Meme Library
+				</Typography>
+				<TextField
+					fullWidth
+					label="Search memes"
+					variant="outlined"
+					value={searchQuery}
+					onChange={e => setSearchQuery(e.target.value)}
+					sx={{mb: 4}}
+				/>
+			</Box>
+
+			{loading ? (
+				<Typography>Loading...</Typography>
+			) : (
+				<Grid container spacing={4}>
+					{filteredMemes.map((meme: any) => (
+						<Grid item xs={12} sm={6} md={4} key={meme.id}>
+							<Card>
+								<CardMedia component="img" height="200" image={meme.url} alt={meme.title} />
+								<CardContent>
+									<Typography gutterBottom variant="h6" component="div">
+										{meme.title}
+									</Typography>
+									<Typography variant="body2" color="text.secondary">
+										{new Date(meme.createdAt).toLocaleDateString()}
+									</Typography>
+								</CardContent>
+								<CardActions>
+									<Button size="small" color="primary">
+										Share
+									</Button>
+									<Button size="small" color="primary">
+										Edit
+									</Button>
+								</CardActions>
+							</Card>
+						</Grid>
+					))}
+				</Grid>
+			)}
+		</Container>
 	);
 };
