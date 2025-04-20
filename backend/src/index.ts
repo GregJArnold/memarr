@@ -7,8 +7,8 @@ import {initErrorReporting} from "./utils/errorReporting";
 import "./config/database";
 import {createSchema} from "./graphql";
 import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs";
-import {authenticate, AuthContext} from "./middleware/auth";
-
+import {authenticate} from "./middleware/auth";
+import {AuthContext} from "./context";
 const app = express();
 const port = process.env.PORT || 4000;
 
@@ -34,7 +34,7 @@ async function startServer() {
 	// Apply middleware
 	app.use(
 		"/graphql",
-		cors<cors.CorsRequest>(),
+		cors<cors.CorsRequest>({origin: true, credentials: true}),
 		json(),
 		graphqlUploadExpress(),
 		expressMiddleware(server, {
