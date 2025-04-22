@@ -1,5 +1,5 @@
 import {BaseModel} from "../models/base";
-import {GraphQLFieldResolver} from "graphql";
+import {GraphQLFieldResolver, GraphQLResolveInfo} from "graphql";
 import {Transaction} from "objection";
 import {DBError} from "db-errors";
 import retry, {Options} from "async-retry";
@@ -26,10 +26,10 @@ const simpleTransaction = <T>(level: IsolationLevel, callback: TransactionCallba
 		.then(() => BaseModel.transaction(callback));
 
 const retryTransaction = <T>(level: IsolationLevel, callback: TransactionCallback<T>): Promise<T> =>
-	retry(async (bail): Promise<any> => {
+	retry(async (bail): Promise<T> => {
 		try {
 			return await simpleTransaction(level, callback);
-		} catch (err: any) {
+		} catch (err: Error) {
 			const {code} = err instanceof DBError ? err.nativeError : err;
 			if (code === "40001") throw err;
 			bail(err);
@@ -48,14 +48,14 @@ export function transaction<T>(level: IsolationLevel, callback: TransactionCallb
 	}
 }
 
-export function withTransaction<TResult, TParent, TContext, TArgs>(
+export function withTransaction<TParent, TContext, TArgs, TResult>(
 	isolationLevel: IsolationLevel,
 	resolver: GraphQLFieldResolver<TParent, TContext, TArgs, TResult>
 ): GraphQLFieldResolver<TParent, TContext & {trx: Transaction}, TArgs, Promise<TResult>>;
-export function withTransaction<TArgs, TContext, TSource>(
+export function withTransaction<TParent, TContext, TArgs, TResult>(
 	resolver: GraphQLFieldResolver<TParent, TContext, TArgs, TResult>
-): GraphQLFieldResolver<TSource, TContext & {trx: Transaction}, TArgs, Promise<TResult>>;
-export function withTransaction<TPromise, TArgs, TContext, TSource>(
+): GraphQLFieldResolver<TParent, TContext & {trx: Transaction}, TArgs, Promise<TResult>>;
+export function withTransaction<TParent, TContext, TArgs, TResult>(
 	typeOrResolver: GraphQLFieldResolver<TParent, TContext, TArgs, TResult> | IsolationLevel,
 	resolver?: GraphQLFieldResolver<TParent, TContext, TArgs, TResult>
 ): GraphQLFieldResolver<TParent, TContext & {trx: Transaction}, TArgs, Promise<TResult>> {
@@ -63,7 +63,7 @@ export function withTransaction<TPromise, TArgs, TContext, TSource>(
 		resolver = typeOrResolver;
 		typeOrResolver = IsolationLevel.Serializable;
 	}
-	return (parent: TParent, args: TArgs, ctx: TContext, info: GraphQLResolveInfo): Promise<TPromise> =>
+	return (parent: TParent, args: TArgs, ctx: TContext, info: GraphQLResolveInfo): Promise<TResult> =>
 		transaction(
 			typeOrResolver as IsolationLevel,
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion

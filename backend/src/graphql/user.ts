@@ -1,5 +1,4 @@
 import gql from "graphql-tag";
-import {Transaction} from "objection";
 import {User} from "../models/user";
 import bcrypt from "bcrypt";
 import {withTransaction} from "../middleware/transaction";

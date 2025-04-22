@@ -2,6 +2,7 @@ import {Request} from "express";
 import jwt from "jsonwebtoken";
 import {User} from "../models/user";
 import {Context} from "../context";
+import {GraphQLFieldResolver, GraphQLResolveInfo} from "graphql";
 
 export const authenticate = async (req: Request): Promise<Context> => {
 	const authHeader = req.headers.authorization;
@@ -31,3 +32,12 @@ export const authenticate = async (req: Request): Promise<Context> => {
 		throw error;
 	}
 };
+
+export function withUser<TResult, TParent, TContext, TArgs>(
+	resolver: GraphQLFieldResolver<TParent, TContext, TArgs, TResult>
+): GraphQLFieldResolver<TParent, TContext & {user: User}, TArgs, Promise<TResult>> {
+	return async (parent: TParent, args: TArgs, ctx: TContext, info: GraphQLResolveInfo): Promise<TResult> => {
+		if (!ctx.user) throw new Error("Not authenticated");
+		return resolver(parent, args, ctx, info);
+	};
+}

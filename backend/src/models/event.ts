@@ -6,6 +6,7 @@ export class Event extends BaseModel {
 	userId!: string;
 	memeId?: string;
 	type!: string;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	data?: Record<string, any>;
 
 	static relationMappings = {

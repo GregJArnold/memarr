@@ -12,6 +12,7 @@ export const createSchema = () => {
 	const resolvers = [scalarResolvers];
 
 	for (const file of files) {
+		// eslint-disable-next-line @typescript-eslint/no-var-requires
 		const module = require(join(graphqlDir, file));
 		if (module.typeDefs) typeDefs.push(module.typeDefs);
 		if (module.resolvers) resolvers.push(module.resolvers);

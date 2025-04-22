@@ -1,16 +1,20 @@
 import {BaseModel} from "./base";
-import {v4 as uuidv4} from "uuid";
 import {Transaction} from "objection";
 import {AIClassifier} from "../services/ai-classification";
 import {readFile} from "fs/promises";
 import {Template} from "./template";
 import {transaction, IsolationLevel} from "../middleware/transaction";
+import {User} from "./user";
 
 export class Meme extends BaseModel {
 	static tableName = "meme";
 
 	templateId!: string;
+	template?: Template;
+
 	userId!: string;
+	user?: User;
+
 	filePath!: string;
 
 	static relationMappings = {
@@ -46,11 +50,18 @@ export class Meme extends BaseModel {
 				to: "tag.meme_id",
 			},
 		},
+		events: {
+			relation: BaseModel.HasManyRelation,
+			modelClass: "Event",
+			join: {
+				from: "meme.id",
+				to: "event.meme_id",
+			},
+		},
 	};
 
 	async process(trx?: Transaction, classifier: AIClassifier): Promise<void> {
 		const imageBuffer = await readFile(this.filePath);
-
 		const result = await classifier.classifyImage(imageBuffer);
 
 		return transaction(IsolationLevel.Serializable, async trx => {
@@ -58,6 +69,8 @@ export class Meme extends BaseModel {
 				await this.relatedQuery("tags", trx).insert({name: "failed analysis"});
 				return;
 			}
+
+			await result.template.$query(trx).insert();
 
 			await this.$query(trx).patch({templateId: result.template.id});
 			await this.relatedQuery("meme_texts", trx).delete();

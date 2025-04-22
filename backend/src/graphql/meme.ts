@@ -1,9 +1,10 @@
 import {FileUploadService} from "../services/fileUpload";
 import {Meme} from "../models/meme";
-import {Task} from "../models/task";
 import gql from "graphql-tag";
 import {withTransaction} from "../middleware/transaction";
-import {AuthTransactionContext} from "../middleware/auth";
+import {AuthTransactionContext, withUser} from "../middleware/auth";
+import {FileUpload} from "graphql-upload";
+
 const fileUploadService = new FileUploadService();
 
 export const typeDefs = gql`
@@ -23,27 +24,34 @@ export const typeDefs = gql`
 
 export const resolvers = {
 	Mutation: {
-		uploadMeme: withTransaction(async (_: any, {file}: {file: any}, {user, trx}: AuthTransactionContext) => {
-			if (!user) {
-				throw new Error("Not authenticated");
-			}
+		uploadMeme: withUser(
+			withTransaction(
+				async (_: unknown, {file}: {file: Promise<FileUpload>}, {user, trx}: AuthTransactionContext) => {
+					const {createReadStream, filename} = await file;
+					const stream = createReadStream();
+					const chunks: Buffer[] = [];
 
-			const {createReadStream, filename} = await file;
-			const stream = createReadStream();
-			const chunks: Buffer[] = [];
+					for await (const chunk of stream) chunks.push(chunk);
 
-			for await (const chunk of stream) chunks.push(chunk);
+					const buffer = Buffer.concat(chunks);
+					const savedFilename = await fileUploadService.saveMeme(buffer, filename);
 
-			const buffer = Buffer.concat(chunks);
-			const savedFilename = await fileUploadService.saveMeme(buffer, filename);
+					const newMeme = await Meme.query(trx).insertAndFetch({
+						userId: user.id,
+						filePath: savedFilename,
+					});
 
-			const newMeme = await Meme.query(trx).insert({
-				userId: user.id,
-				filePath: savedFilename,
-			});
+					await newMeme.relatedQuery("tasks", trx).insert({memeId: newMeme.id, action: "process"});
 
-			await Task.query(trx).insert({memeId: newMeme.id, action: "process"});
-			return newMeme;
-		}),
+					await newMeme.relatedQuery("events", trx).insert({
+						userId: user.id,
+						type: "meme_uploaded",
+						data: {filename: savedFilename},
+					});
+
+					return newMeme;
+				}
+			)
+		),
 	},
 };

@@ -8,7 +8,6 @@ import "./config/database";
 import {createSchema} from "./graphql";
 import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs";
 import {authenticate} from "./middleware/auth";
-import {AuthContext} from "./context";
 const app = express();
 const port = process.env.PORT || 4000;
 
