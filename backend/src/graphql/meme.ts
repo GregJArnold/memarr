@@ -2,8 +2,9 @@ import {FileUploadService} from "../services/fileUpload";
 import {Meme} from "../models/meme";
 import gql from "graphql-tag";
 import {withTransaction} from "../middleware/transaction";
-import {AuthTransactionContext, withUser} from "../middleware/auth";
-import {FileUpload} from "graphql-upload";
+import {withUser} from "../middleware/auth";
+import {AuthTransactionContext} from "../context";
+import {FileUpload} from "graphql-upload/processRequest.mjs";
 
 const fileUploadService = new FileUploadService();
 
@@ -41,9 +42,9 @@ export const resolvers = {
 						filePath: savedFilename,
 					});
 
-					await newMeme.relatedQuery("tasks", trx).insert({memeId: newMeme.id, action: "process"});
+					await newMeme.$relatedQuery("tasks", trx).insert({action: "process"});
 
-					await newMeme.relatedQuery("events", trx).insert({
+					await newMeme.$relatedQuery("events", trx).insert({
 						userId: user.id,
 						type: "meme_uploaded",
 						data: {filename: savedFilename},
