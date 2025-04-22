@@ -1,23 +1,25 @@
 import {AIClassifier} from "../services/ai-classification";
-import {Task} from "../models";
+import {Task} from "../models/task";
 import {IsolationLevel, transaction} from "../middleware/transaction";
+import {Joined} from "../utils/relation-types";
 
 const service = new AIClassifier();
 
 async function processNextTask() {
 	try {
 		const task = await transaction(IsolationLevel.Serializable, async trx => {
-			const task = await Task.query()
+			const task = (await Task.query()
 				.where("action", "process")
 				.orderBy("created_at", "asc")
 				.withGraphFetched("meme")
-				.first();
+				.first()) as Joined<Task, "meme">;
 			if (!task) return;
-			await task.query(trx).patch({status: "processing"});
+			await task.$query(trx).patch({status: "processing"});
 			return task;
 		});
 
-		await task.meme.process(trx, service);
+		if (!task) return;
+		await task.meme.process(service);
 		await Task.query().deleteById(task.id);
 	} catch (error) {
 		console.error("Error processing task:", error);
