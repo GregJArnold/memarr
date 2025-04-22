@@ -66,6 +66,7 @@ export async function up(knex: Knex): Promise<void> {
 		table.string("type").notNullable();
 		table.jsonb("data");
 		table.timestamp("created_at").notNullable().defaultTo(knex.fn.now());
+		table.timestamp("updated_at").notNullable().defaultTo(knex.fn.now());
 	});
 
 	// Create submission table
