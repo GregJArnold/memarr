@@ -59,16 +59,16 @@ This plan outlines the development of the Meme Library Search Web App as specifi
 **ID**: T4  
 **Context**: Integrate an AI model to classify meme templates and extract text blocks, forming the core of the app's functionality. Use a placeholder OpenAI-compatible model for local testing.  
 **Dependencies**: T2  
-- [ ] **T4.1**: Set up AI model integration
+- [x] **T4.1**: Set up AI model integration
   - Choose a local or self-hosted AI model (e.g., Hugging Face model for image classification and OCR).
   - Create a service to interface with the model via API or local execution.
-- [ ] **T4.2**: Implement template classification
+- [x] **T4.2**: Implement template classification
   - Process uploaded meme images to identify templates (e.g., "Distracted Boyfriend").
   - Return a template name or "unknown" if unrecognized.
-- [ ] **T4.3**: Implement text extraction
+- [x] **T4.3**: Implement text extraction
   - Use OCR to extract text blocks from memes.
   - Label blocks (e.g., top text, bottom text) based on position or template-specific logic.
-- [ ] **T4.4**: Store classification results
+- [x] **T4.4**: Store classification results
   - Save template name and text blocks as metadata in the Memes table.
   - Add a "failed analysis" tag if classification fails.
 
@@ -76,15 +76,15 @@ This plan outlines the development of the Meme Library Search Web App as specifi
 **ID**: T5  
 **Context**: Allow users to upload memes, process them with the AI, and store them in the library, including handling failed classifications.  
 **Dependencies**: T3, T4  
-- [ ] **T5.1**: Create meme upload endpoint
+- [x] **T5.1**: Create meme upload endpoint
   - Implement a GraphQL mutation to upload meme images (authenticated users only).
   - Save images to local storage and store file path in the database.
-- [ ] **T5.2**: Integrate AI classification
+- [x] **T5.2**: Integrate AI classification
   - Trigger AI classification (template and text extraction) on upload.
   - Store results in the Memes table or tag as "failed analysis".
-- [ ] **T5.3**: Log upload event
+- [x] **T5.3**: Log upload event
   - Create an event in the Events table (e.g., "Meme uploaded", timestamp, meme ID).
-- [ ] **T5.4**: Handle failed classifications
+- [x] **T5.4**: Handle failed classifications
   - If AI fails, tag meme with "failed analysis" and log event.
   - Return an error response to the client with options to describe or submit.
 
