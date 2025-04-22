@@ -5,6 +5,8 @@ export class BaseModel extends Model {
 	createdAt!: Date;
 	updatedAt!: Date;
 
+	static modelPaths = [__dirname];
+
 	$beforeInsert() {
 		this.createdAt = new Date();
 		this.updatedAt = new Date();
