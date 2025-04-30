@@ -122,10 +122,10 @@ This plan outlines the development of the Meme Library Search Web App as specifi
 **ID**: T8  
 **Context**: Create a frontend interface for users to upload memes and handle failed classifications.  
 **Dependencies**: T5, T7  
-- [ ] **T8.1**: Create upload form
+- [x] **T8.1**: Create upload form
   - Add a file input field to the Library page for image uploads.
   - Include a submit button to trigger the upload.
-- [ ] **T8.2**: Integrate with upload endpoint
+- [x] **T8.2**: Integrate with upload endpoint
   - Call the meme upload mutation with the selected file.
   - Display a success message on successful upload.
 - [ ] **T8.3**: Implement error modal for failed classifications
@@ -187,10 +187,10 @@ This plan outlines the development of the Meme Library Search Web App as specifi
 **ID**: T12  
 **Context**: Allow users to add, edit, and remove custom tags for memes to enhance searchability.  
 **Dependencies**: T9  
-- [ ] **T12.1**: Create tagging endpoints
+- [x] **T12.1**: Create tagging endpoints
   - Implement GraphQL mutations to add, edit, and delete tags for a meme.
   - Store tags in the Tags table with meme ID.
-- [ ] **T12.2**: Build tagging UI
+- [x] **T12.2**: Build tagging UI
   - Add a tag input field to the meme detail page.
   - Display existing tags with an option to edit or delete.
 - [ ] **T12.3**: Update search to include tags
