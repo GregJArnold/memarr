@@ -18,7 +18,9 @@ export const Home = () => {
 
 			<Grid container spacing={4} sx={{mt: 4}}>
 				<Grid size={{xs: 12, md: 6}}>
-					<MemeUpload />
+					<Paper elevation={3} sx={{p: 4}}>
+						<MemeUpload />
+					</Paper>
 				</Grid>
 				<Grid size={{xs: 12, md: 6}}>
 					<Paper elevation={3} sx={{p: 4}}>

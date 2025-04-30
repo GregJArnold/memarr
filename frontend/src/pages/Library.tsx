@@ -1,5 +1,6 @@
 import {useState} from "react";
-import {gql, useQuery} from "@apollo/client";
+import {useQuery} from "@apollo/client";
+import {useNavigate} from "react-router-dom";
 import {
 	Box,
 	Container,
@@ -13,31 +14,24 @@ import {
 	Button,
 } from "@mui/material";
 import {MemeUpload} from "../components/MemeUpload";
-
-const GET_MEMES_QUERY = gql`
-	query GetMemes {
-		memes {
-			id
-			url
-			title
-			createdAt
-		}
-	}
-`;
+import {Meme, GET_MEMES_QUERY, inflateMeme} from "../graphql/meme";
 
 export const Library = () => {
+	const navigate = useNavigate();
 	const [searchQuery, setSearchQuery] = useState("");
 	const {data, loading} = useQuery(GET_MEMES_QUERY);
 
-	const filteredMemes =
-		data?.memes?.filter((meme: any) => meme.title.toLowerCase().includes(searchQuery.toLowerCase())) || [];
+	const filteredMemes = (data?.memes || []).map(inflateMeme);
 
 	return (
 		<Container maxWidth="lg">
 			<Box sx={{mt: 4}}>
-				<Typography variant="h3" component="h1" gutterBottom>
-					My Meme Library
-				</Typography>
+				<Grid spacing={4} sx={{sm: 4}}>
+					<Typography variant="h3" component="h1" gutterBottom>
+						My Meme Library
+					</Typography>
+					<MemeUpload />
+				</Grid>
 				<TextField
 					fullWidth
 					label="Search memes"
@@ -49,29 +43,23 @@ export const Library = () => {
 			</Box>
 
 			<Grid container spacing={4}>
-				<Grid size={{xs: 12, md: 4}}>
-					<MemeUpload />
-				</Grid>
 				<Grid size={{xs: 12, md: 8}}>
 					{loading ? (
 						<Typography>Loading...</Typography>
 					) : (
 						<Grid container spacing={4}>
-							{filteredMemes.map((meme: any) => (
+							{filteredMemes.map((meme: Meme) => (
 								<Grid size={{xs: 12, sm: 6, md: 4}} key={meme.id}>
 									<Card>
-										<CardMedia component="img" height="200" image={meme.url} alt={meme.title} />
+										<CardMedia component="img" height="200" image={meme.url} alt="Meme" />
 										<CardContent>
-											<Typography gutterBottom variant="h6" component="div">
-												{meme.title}
-											</Typography>
 											<Typography variant="body2" color="text.secondary">
 												{new Date(meme.createdAt).toLocaleDateString()}
 											</Typography>
 										</CardContent>
-										<CardActions>
-											<Button size="small" color="primary">
-												Share
+										<CardActions sx={{justifyContent: "space-around"}}>
+											<Button size="small" color="primary" onClick={() => navigate(`/library/${meme.id}`)}>
+												View
 											</Button>
 											<Button size="small" color="primary">
 												Edit

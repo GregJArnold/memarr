@@ -29,11 +29,9 @@ export const MemeUpload = () => {
 	};
 
 	return (
-		<Paper elevation={3} sx={{p: 4}}>
-			<Button component="label" variant="contained" startIcon={<CloudUpload />} disabled={loading}>
-				Upload a Meme
-				<input hidden accept="image/*" type="file" onChange={handleFileChange} />
-			</Button>
-		</Paper>
+		<Button component="label" variant="contained" startIcon={<CloudUpload />} disabled={loading}>
+			Upload a Meme
+			<input hidden accept="image/*" type="file" onChange={handleFileChange} />
+		</Button>
 	);
 };
