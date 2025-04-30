@@ -23,6 +23,30 @@ export const typeDefs = gql`
 		updatedAt: DateTime!
 	}
 
+	type Tag {
+		id: ID!
+		name: String!
+	}
+
+	type Template {
+		id: ID!
+		name: String!
+		description: String
+		textBlocks: [TextBlock!]!
+	}
+
+	type TextBlock {
+		id: ID!
+		key: String!
+		label: String!
+	}
+
+	type MemeText {
+		id: ID!
+		content: String!
+		textBlock: TextBlock!
+	}
+
 	type Query {
 		memes: [Meme!]!
 		meme(id: ID!): Meme
