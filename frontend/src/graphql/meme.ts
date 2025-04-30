@@ -30,8 +30,8 @@ export const MEME_FRAGMENT = gql`
 `;
 
 export const GET_MEME_QUERY = gql`
-	query GetMeme($id: ID!) {
-		meme(id: $id) {
+	query GetMeme($memeId: ID!) {
+		meme(memeId: $memeId) {
 			...MemeFragment @unmask
 		}
 	}

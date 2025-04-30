@@ -32,7 +32,7 @@ export const MemePage = () => {
 	const [newTextBlock, setNewTextBlock] = useState("");
 
 	const {data, loading, startPolling, stopPolling} = useQueryWithToast(GET_MEME_QUERY, {
-		variables: {id: memeId},
+		variables: {memeId},
 		skip: !memeId,
 	});
 

@@ -49,7 +49,7 @@ export const typeDefs = gql`
 
 	type Query {
 		memes: [Meme!]!
-		meme(id: ID!): Meme
+		meme(memeId: ID!): Meme
 	}
 
 	type Mutation {
