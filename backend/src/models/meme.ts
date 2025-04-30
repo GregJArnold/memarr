@@ -3,12 +3,14 @@ import {RelationMappings, Transaction} from "objection";
 import {AIClassifier} from "../services/ai-classification";
 import {readFile} from "fs/promises";
 import {Template} from "./template";
-import {transaction, IsolationLevel} from "../middleware/transaction";
 import {User} from "./user";
 import {Task} from "./task";
 import {Tag} from "./tag";
 import {Event} from "./event";
 import {MemeText} from "./meme-text";
+import {FileUploadService} from "../services/fileUpload";
+
+const fileUploadService = new FileUploadService();
 
 export class Meme extends BaseModel {
 	static tableName = "meme";
@@ -30,7 +32,7 @@ export class Meme extends BaseModel {
 		return {
 			template: {
 				relation: BaseModel.BelongsToOneRelation,
-				modelClass: "Template",
+				modelClass: Template,
 				join: {
 					from: "meme.template_id",
 					to: "template.id",
@@ -38,7 +40,7 @@ export class Meme extends BaseModel {
 			},
 			user: {
 				relation: BaseModel.BelongsToOneRelation,
-				modelClass: "User",
+				modelClass: User,
 				join: {
 					from: "meme.user_id",
 					to: "user.id",
@@ -80,26 +82,25 @@ export class Meme extends BaseModel {
 	}
 
 	async process(classifier: AIClassifier, trx?: Transaction): Promise<void> {
-		const imageBuffer = await readFile(this.filePath);
+		const path = fileUploadService.getMemePath(this.filePath);
+		const imageBuffer = await readFile(path);
 		const result = await classifier.classifyImage(imageBuffer);
 
-		return transaction(IsolationLevel.Serializable, async trx => {
-			if (!result.template) {
-				await this.$relatedQuery("tags", trx).insert({name: "failed analysis"});
-				return;
-			}
+		if (!result.template) {
+			await this.$relatedQuery("tags", trx).insert({name: "failed analysis"});
+			return;
+		}
 
-			await result.template.$query(trx).insert();
+		await result.template.$query(trx).insert();
 
-			await this.$query(trx).patch({templateId: result.template.id});
-			await this.$relatedQuery("meme_texts", trx).delete();
-			await this.$relatedQuery("meme_texts", trx).insert(
-				result.textBlocks.map(block => ({
-					memeId: this.id,
-					textBlockId: block.textBlockId,
-					content: block.content,
-				}))
-			);
-		});
+		await this.$query(trx).patch({templateId: result.template.id});
+		await this.$relatedQuery("meme_texts", trx).delete();
+		await this.$relatedQuery("meme_texts", trx).insert(
+			result.textBlocks.map(block => ({
+				memeId: this.id,
+				textBlockId: block.textBlockId,
+				content: block.content,
+			}))
+		);
 	}
 }

@@ -1,3 +1,4 @@
+import {RelationMappings} from "objection";
 import {BaseModel} from "./base";
 import {Meme} from "./meme";
 
@@ -17,14 +18,16 @@ export class Task extends BaseModel {
 	status!: TaskStatus;
 	meme?: Meme;
 
-	static relationMappings = {
-		meme: {
-			relation: BaseModel.BelongsToOneRelation,
-			modelClass: "Meme",
-			join: {
-				from: "task.meme_id",
-				to: "meme.id",
+	static get relationMappings(): RelationMappings {
+		return {
+			meme: {
+				relation: BaseModel.BelongsToOneRelation,
+				modelClass: Meme,
+				join: {
+					from: "task.meme_id",
+					to: "meme.id",
+				},
 			},
-		},
-	};
+		};
+	}
 }
