@@ -4,7 +4,6 @@ import {
 	Box,
 	Container,
 	Grid,
-	Paper,
 	Typography,
 	TextField,
 	Card,
@@ -13,6 +12,7 @@ import {
 	CardActions,
 	Button,
 } from "@mui/material";
+import {MemeUpload} from "../components/MemeUpload";
 
 const GET_MEMES_QUERY = gql`
 	query GetMemes {
@@ -48,35 +48,42 @@ export const Library = () => {
 				/>
 			</Box>
 
-			{loading ? (
-				<Typography>Loading...</Typography>
-			) : (
-				<Grid container spacing={4}>
-					{filteredMemes.map((meme: any) => (
-						<Grid item xs={12} sm={6} md={4} key={meme.id}>
-							<Card>
-								<CardMedia component="img" height="200" image={meme.url} alt={meme.title} />
-								<CardContent>
-									<Typography gutterBottom variant="h6" component="div">
-										{meme.title}
-									</Typography>
-									<Typography variant="body2" color="text.secondary">
-										{new Date(meme.createdAt).toLocaleDateString()}
-									</Typography>
-								</CardContent>
-								<CardActions>
-									<Button size="small" color="primary">
-										Share
-									</Button>
-									<Button size="small" color="primary">
-										Edit
-									</Button>
-								</CardActions>
-							</Card>
-						</Grid>
-					))}
+			<Grid container spacing={4}>
+				<Grid size={{xs: 12, md: 4}}>
+					<MemeUpload />
 				</Grid>
-			)}
+				<Grid size={{xs: 12, md: 8}}>
+					{loading ? (
+						<Typography>Loading...</Typography>
+					) : (
+						<Grid container spacing={4}>
+							{filteredMemes.map((meme: any) => (
+								<Grid size={{xs: 12, sm: 6, md: 4}} key={meme.id}>
+									<Card>
+										<CardMedia component="img" height="200" image={meme.url} alt={meme.title} />
+										<CardContent>
+											<Typography gutterBottom variant="h6" component="div">
+												{meme.title}
+											</Typography>
+											<Typography variant="body2" color="text.secondary">
+												{new Date(meme.createdAt).toLocaleDateString()}
+											</Typography>
+										</CardContent>
+										<CardActions>
+											<Button size="small" color="primary">
+												Share
+											</Button>
+											<Button size="small" color="primary">
+												Edit
+											</Button>
+										</CardActions>
+									</Card>
+								</Grid>
+							))}
+						</Grid>
+					)}
+				</Grid>
+			</Grid>
 		</Container>
 	);
 };
