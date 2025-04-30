@@ -6,7 +6,7 @@ export const useMutationWithToast = <TData = any, TVariables = any>(
 	options?: MutationHookOptions<TData, TVariables>
 ): MutationTuple<TData, TVariables> => {
 	const {addToast} = useToast();
-	const [mutate, result] = useMutation(mutation, {
+	return useMutation(mutation, {
 		...options,
 		onError: error => {
 			addToast(error.message, "error");
@@ -15,6 +15,4 @@ export const useMutationWithToast = <TData = any, TVariables = any>(
 			}
 		},
 	});
-
-	return [mutate, result];
 };
