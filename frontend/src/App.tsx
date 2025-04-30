@@ -12,6 +12,7 @@ import {Profile} from "./pages/Profile";
 import {Settings} from "./pages/Settings";
 import {Create} from "./pages/Create";
 import {Edit} from "./pages/Edit";
+import {MemePage} from "./pages/MemePage";
 import "./App.css";
 
 export const App = () => {
@@ -23,6 +24,7 @@ export const App = () => {
 						<Routes>
 							<Route path="/" element={<Home />} />
 							<Route path="/library" element={<Library />} />
+							<Route path="/library/:memeId" element={<MemePage />} />
 							<Route path="/activity" element={<Activity />} />
 							<Route path="/login" element={<Login />} />
 							<Route path="/signup" element={<Signup />} />
