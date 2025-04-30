@@ -8,6 +8,8 @@ import "./config/database";
 import {createSchema} from "./graphql";
 import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs";
 import {authenticate} from "./middleware/auth";
+import imageRouter from "./routes/image";
+
 const app = express();
 const port = process.env.PORT || 4000;
 
@@ -20,6 +22,8 @@ if (process.env.SENTRY_DSN) {
 app.get("/health", (req, res) => {
 	res.json({status: "ok"});
 });
+
+app.use("/image", imageRouter);
 
 // Create Apollo Server
 const server = new ApolloServer({
