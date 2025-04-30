@@ -1,4 +1,4 @@
-import {createContext, useContext, useState, ReactNode, useMemo} from "react";
+import {createContext, useCallback, useContext, useState, ReactNode, useMemo} from "react";
 import {Snackbar, Alert, AlertColor} from "@mui/material";
 
 interface Toast {
@@ -18,19 +18,16 @@ const ToastContext = createContext<ToastContextType | undefined>(undefined);
 export const ToastProvider = ({children}: {children: ReactNode}) => {
 	const [toasts, setToasts] = useState<Toast[]>([]);
 
-	const value = useMemo(
-		() => ({
-			removeToast: (id: string) => {
-				setToasts(prev => prev.filter(toast => toast.id !== id));
-			},
-			addToast: (message: string, type: AlertColor) => {
-				const id = Math.random().toString(36).substr(2, 9);
-				setToasts(prev => [...prev, {id, message, type}]);
-			},
-			toasts,
-		}),
-		[toasts]
-	);
+	const removeToast = useCallback((id: string) => {
+		setToasts(prev => prev.filter(toast => toast.id !== id));
+	}, []);
+
+	const addToast = useCallback((message: string, type: AlertColor) => {
+		const id = Math.random().toString(36).substr(2, 9);
+		setToasts(prev => [...prev, {id, message, type}]);
+	}, []);
+
+	const value = useMemo(() => ({removeToast, addToast, toasts}), [removeToast, addToast, toasts]);
 
 	return (
 		<ToastContext.Provider value={value}>
@@ -44,7 +41,7 @@ export const ToastProvider = ({children}: {children: ReactNode}) => {
 					anchorOrigin={{vertical: "bottom", horizontal: "right"}}
 					sx={{bottom: 24}}
 				>
-					<Alert onClose={() => value.removeToast(toast.id)} severity={toast.type} sx={{width: "100%"}}>
+					<Alert onClose={() => removeToast(toast.id)} severity={toast.type} sx={{width: "100%"}}>
 						{toast.message}
 					</Alert>
 				</Snackbar>
