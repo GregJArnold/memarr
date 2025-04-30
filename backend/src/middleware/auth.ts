@@ -33,11 +33,11 @@ export const authenticate = async (req: Request): Promise<Context> => {
 	}
 };
 
-export function withUser<TResult, TParent, TContext, TArgs>(
-	resolver: GraphQLFieldResolver<TParent, TContext, TArgs, TResult>
-): GraphQLFieldResolver<TParent, TContext & {user: User}, TArgs, Promise<TResult>> {
+export function withUser<TResult, TParent, TContext extends Context, TArgs>(
+	resolver: GraphQLFieldResolver<TParent, TContext & {user: User}, TArgs, Promise<TResult>>
+): GraphQLFieldResolver<TParent, TContext, TArgs, Promise<TResult>> {
 	return async (parent: TParent, args: TArgs, ctx: TContext, info: GraphQLResolveInfo): Promise<TResult> => {
 		if (!ctx.user) throw new Error("Not authenticated");
-		return resolver(parent, args, ctx, info);
+		return resolver(parent, args, ctx as TContext & {user: User}, info);
 	};
 }

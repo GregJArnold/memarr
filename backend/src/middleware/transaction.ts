@@ -26,11 +26,11 @@ const simpleTransaction = <T>(level: IsolationLevel, callback: TransactionCallba
 		.then(() => BaseModel.transaction(callback));
 
 const retryTransaction = <T>(level: IsolationLevel, callback: TransactionCallback<T>): Promise<T> =>
-	retry(async (bail): Promise<T> => {
+	retry<T>(async (bail): Promise<any> => {
 		try {
 			return await simpleTransaction(level, callback);
-		} catch (err: Error) {
-			const {code} = err instanceof DBError ? err.nativeError : err;
+		} catch (err) {
+			const {code} = (err instanceof DBError ? err.nativeError : err) as {code: string};
 			if (code === "40001") throw err;
 			bail(err);
 		}
@@ -67,6 +67,6 @@ export function withTransaction<TParent, TContext, TArgs, TResult>(
 		transaction(
 			typeOrResolver as IsolationLevel,
 			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			(trx: Transaction) => resolver!(parent, args, {...ctx, trx}, info)
+			async (trx: Transaction) => resolver!(parent, args, {...ctx, trx}, info)
 		);
 }
