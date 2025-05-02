@@ -11,6 +11,7 @@ export class Event extends BaseModel {
 	memeId?: string;
 	meme?: Meme;
 	type!: string;
+	acknowledged!: boolean;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	data?: Record<string, any>;
 
