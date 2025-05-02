@@ -44,7 +44,7 @@ Format your response as JSON with the following structure:
 		if (!template) template = await new Template().$query().insertAndFetch({name: parsedResult.templateName});
 
 		// Process text blocks
-		const textBlocks = parsedResult.textBlocks.map(content => ({textBlockId: uuidv4(), content}));
+		const textBlocks = parsedResult.textBlocks.map((content: string) => ({textBlockId: uuidv4(), content}));
 
 		return {
 			template,
