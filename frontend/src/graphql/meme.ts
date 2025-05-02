@@ -42,8 +42,8 @@ export const GET_MEME_QUERY = gql`
 `;
 
 export const GET_MEMES_QUERY = gql`
-	query GetMemes {
-		memes {
+	query GetMemes($templateId: [ID!], $textContent: String, $tags: [ID!], $allTags: Boolean) {
+		memes(templateId: $templateId, textContent: $textContent, tags: $tags, allTags: $allTags) {
 			...MemeFragment @unmask
 		}
 	}
