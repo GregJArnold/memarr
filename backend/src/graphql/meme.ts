@@ -5,6 +5,7 @@ import {withTransaction} from "../middleware/transaction";
 import {withUser} from "../middleware/auth";
 import {AuthTransactionContext} from "../context";
 import {FileUpload} from "graphql-upload/processRequest.mjs";
+import {EventType} from "../models/event";
 
 const fileUploadService = new FileUploadService();
 
@@ -139,28 +140,30 @@ export const resolvers = {
 					});
 
 					await newMeme.$relatedQuery("tasks", trx).insert({action: "process"});
-
-					await newMeme.$relatedQuery("events", trx).insert({
-						userId: user.id,
-						type: "meme_uploaded",
-						data: {filename: savedFilename},
-					});
+					await newMeme.createEvent(EventType.MemeCreated, {filename: savedFilename});
 
 					return newMeme;
 				}
 			)
 		),
 		addTag: withMeme(async (_, {tagName}: {tagName: string}, {trx}, meme) => {
-			await meme.$relatedQuery("tags", trx).insert({name: tagName});
+			const tag = await meme.$relatedQuery("tags", trx).insertAndFetch({name: tagName});
+			await meme.createEvent(EventType.TagCreated, {tagName, tagId: tag.id});
 			return meme.$query(trx).withGraphFetched("[tags, template, texts.[textBlock]]");
 		}),
 		removeTag: withMeme(async (_, {tagId}: {tagId: string}, {trx}, meme) => {
+			const tag = await meme.$relatedQuery("tags", trx).findById(tagId);
+			if (!tag) throw new Error("Tag not found");
+
 			await meme.$relatedQuery("tags", trx).deleteById(tagId);
+			await meme.createEvent(EventType.TagDeleted, {tagId, tagName: tag.name});
+
 			return meme.$query(trx).withGraphFetched("[tags, template, texts.[textBlock]]");
 		}),
 		addTextBlock: withMeme(
 			async (_, {text, textBlockId}: {text: string; textBlockId: string}, {trx}, meme) => {
 				await meme.$relatedQuery("texts", trx).insert({content: text, textBlockId});
+				await meme.createEvent(EventType.TextBlockCreated, {text, textBlockId});
 				return meme.$query(trx).withGraphFetched("[tags, template, texts.[textBlock]]");
 			}
 		),
@@ -173,6 +176,7 @@ export const resolvers = {
 				}
 
 				await textBlock.$query(trx).patchAndFetch({content: text});
+				await meme.createEvent(EventType.TextBlockUpdated, {text, textBlockId});
 				return meme.$query(trx).withGraphFetched("[tags, template, texts.[textBlock]]");
 			}
 		),
@@ -184,6 +188,7 @@ export const resolvers = {
 			}
 
 			await textBlock.$query(trx).delete();
+			await meme.createEvent(EventType.TextBlockDeleted, {textBlockId, text: textBlock.content});
 			return meme.$query(trx).withGraphFetched("[tags, template, texts.[textBlock]]");
 		}),
 	},

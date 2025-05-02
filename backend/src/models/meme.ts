@@ -6,7 +6,7 @@ import {Template} from "./template";
 import {User} from "./user";
 import {Task} from "./task";
 import {Tag} from "./tag";
-import {Event} from "./event";
+import {Event, EventType} from "./event";
 import {MemeText} from "./meme-text";
 import {FileUploadService} from "../services/fileUpload";
 
@@ -102,5 +102,9 @@ export class Meme extends BaseModel {
 				content: block.content,
 			}))
 		);
+	}
+
+	async createEvent(type: EventType, data: Record<string, any>, trx?: Transaction): Promise<Event> {
+		return await this.$relatedQuery("events", trx).insertAndFetch({type, data, userId: this.userId});
 	}
 }

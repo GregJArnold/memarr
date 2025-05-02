@@ -3,6 +3,7 @@ import {withTransaction} from "../middleware/transaction";
 import {withUser} from "../middleware/auth";
 import {AuthTransactionContext} from "../context";
 import {Event} from "../models/event";
+import {fn} from "objection";
 import {MemeLoader} from "../loaders/meme-loader";
 
 export const typeDefs = gql`

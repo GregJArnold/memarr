@@ -3,6 +3,7 @@ import {withTransaction} from "../middleware/transaction";
 import {withUser} from "../middleware/auth";
 import {AuthTransactionContext} from "../context";
 import {Tag} from "../models/tag";
+import {EventType} from "../models/event";
 
 export const typeDefs = gql`
 	type Tag {
@@ -10,6 +11,7 @@ export const typeDefs = gql`
 		name: String!
 		createdAt: DateTime!
 		updatedAt: DateTime!
+		meme: Meme!
 	}
 
 	extend type Query {
