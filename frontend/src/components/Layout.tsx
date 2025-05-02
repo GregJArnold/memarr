@@ -1,6 +1,8 @@
 import {ReactNode} from "react";
 import {Link, useLocation} from "react-router-dom";
 import {AppBar, Box, Button, Container, CssBaseline, Toolbar, Typography} from "@mui/material";
+import {useQuery} from "@apollo/client";
+import {ME_QUERY, User} from "../graphql/user";
 
 interface LayoutProps {
 	children: ReactNode;
@@ -8,7 +10,8 @@ interface LayoutProps {
 
 export const Layout = ({children}: LayoutProps) => {
 	const location = useLocation();
-	const isAuthenticated = !!localStorage.getItem("token");
+	const {data, loading} = useQuery<{me: User}>(ME_QUERY);
+	const isAuthenticated = !!data?.me;
 
 	const navLinks = [
 		{path: "/", label: "Home"},
@@ -25,6 +28,24 @@ export const Layout = ({children}: LayoutProps) => {
 				{path: "/login", label: "Login"},
 				{path: "/signup", label: "Sign Up"},
 		  ];
+
+	const authFragment = loading ? (
+		<Typography color="inherit">Loading...</Typography>
+	) : (
+		authLinks.map(link => (
+			<Button
+				key={link.path}
+				component={Link}
+				to={link.path}
+				color="inherit"
+				sx={{
+					fontWeight: location.pathname === link.path ? "bold" : "normal",
+				}}
+			>
+				{link.label}
+			</Button>
+		))
+	);
 
 	return (
 		<Box sx={{display: "flex", flexDirection: "column", minHeight: "100vh"}}>
@@ -60,21 +81,7 @@ export const Layout = ({children}: LayoutProps) => {
 								</Button>
 							))}
 						</Box>
-						<Box sx={{display: "flex", gap: 2, ml: 2}}>
-							{authLinks.map(link => (
-								<Button
-									key={link.path}
-									component={Link}
-									to={link.path}
-									color="inherit"
-									sx={{
-										fontWeight: location.pathname === link.path ? "bold" : "normal",
-									}}
-								>
-									{link.label}
-								</Button>
-							))}
-						</Box>
+						<Box sx={{display: "flex", gap: 2, ml: 2}}>{authFragment}</Box>
 					</Toolbar>
 				</Container>
 			</AppBar>
