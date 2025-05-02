@@ -43,7 +43,7 @@ export const Profile = () => {
 				<Typography>Loading...</Typography>
 			) : (
 				<Grid container spacing={4}>
-					<Grid item xs={12} md={4}>
+					<Grid item sx={{xs: 12, md: 4}}>
 						<Paper elevation={3} sx={{p: 4}}>
 							<Box sx={{display: "flex", flexDirection: "column", alignItems: "center"}}>
 								<Avatar sx={{width: 100, height: 100, mb: 2}}>{data?.me?.email[0].toUpperCase()}</Avatar>
