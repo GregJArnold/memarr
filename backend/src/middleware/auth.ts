@@ -4,7 +4,7 @@ import {User} from "../models/user";
 import {Context} from "../context";
 import {GraphQLFieldResolver, GraphQLResolveInfo} from "graphql";
 
-export const authenticate = async (req: Request): Promise<Context> => {
+export const authenticate = async (req: Request): Promise<Partial<Context>> => {
 	const authHeader = req.headers.authorization;
 	if (!authHeader) {
 		return {};

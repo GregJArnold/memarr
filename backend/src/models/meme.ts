@@ -104,6 +104,7 @@ export class Meme extends BaseModel {
 		);
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	async createEvent(type: EventType, data: Record<string, any>, trx?: Transaction): Promise<Event> {
 		return await this.$relatedQuery("events", trx).insertAndFetch({type, data, userId: this.userId});
 	}

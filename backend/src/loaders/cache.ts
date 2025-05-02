@@ -1,30 +1,31 @@
 import {Context} from "src/context";
 import {BaseLoader} from "./base";
+import {BaseModel} from "src/models/base";
 
 export class LoaderCache {
-	private loaders: Record<string, any>;
+	private loaders: Record<string, BaseLoader<BaseModel>>;
 	protected ctx: Context;
 
-	constructor(ctx: Context) {
-		this.ctx = ctx;
+	constructor(ctx: Omit<Context, "loaders">) {
+		this.ctx = ctx as Context;
 		this.loaders = {};
 	}
 
-	get<T extends BaseLoader<any>>(Loader: LoaderConstructor<T>): T {
+	get<T extends BaseLoader<BaseModel>>(Loader: LoaderConstructor<T>): T {
 		if (!this.loaders[Loader.name]) {
 			this.loaders[Loader.name] = new Loader(this.ctx);
 		}
-		return this.loaders[Loader.name];
+		return this.loaders[Loader.name] as T;
 	}
 
-	async load<T extends BaseLoader<any>>(
+	async load<T extends BaseLoader<BaseModel>>(
 		Loader: LoaderConstructor<T>,
 		key: string | null | undefined
-	): Promise<any> {
+	): Promise<BaseModel | undefined> {
 		return this.get(Loader).load(key);
 	}
 }
 
-export interface LoaderConstructor<T extends BaseLoader<any>> {
+export interface LoaderConstructor<T extends BaseLoader<BaseModel>> {
 	new (ctx: Context): T;
 }
