@@ -1,5 +1,8 @@
 import {gql} from "@apollo/client";
 import {BaseObject, inflateObject} from "./base";
+import {Tag} from "./tag";
+import {Template} from "./template";
+import {MemeText} from "./memeText";
 
 export const MEME_FRAGMENT = gql`
 	fragment MemeFragment on Meme {
@@ -102,9 +105,9 @@ export const DELETE_TEXT_BLOCK_MUTATION = gql`
 export interface Meme extends BaseObject {
 	filePath: string;
 	pendingProcessing: boolean;
-	tags: any[];
-	texts: any[];
-	template: any;
+	tags: Tag[];
+	texts: MemeText[];
+	template: Template;
 	url: string;
 }
 
