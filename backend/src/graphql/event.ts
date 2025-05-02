@@ -12,7 +12,7 @@ export const typeDefs = gql`
 		description: String!
 		createdAt: DateTime!
 		updatedAt: DateTime!
-		acknowledged: Boolean!
+		acknowledgedAt: DateTime
 		memeId: ID!
 		meme: Meme!
 	}
@@ -39,10 +39,9 @@ export const resolvers = {
 			withTransaction(
 				async (_: unknown, {eventId}: {eventId: string}, {user, trx}: AuthTransactionContext) => {
 					const event = await Event.query(trx).where("id", eventId).where("userId", user.id).first();
-
 					if (!event) throw new Error("Event not found");
 
-					return event.$query(trx).patchAndFetch({acknowledged: true});
+					return event.$query(trx).patchAndFetch({acknowledgedAt: fn.now()});
 				}
 			)
 		),
