@@ -1,8 +1,8 @@
-import {useQuery, QueryHookOptions, OperationVariables} from "@apollo/client";
+import {useQuery, DocumentNode, OperationVariables, QueryHookOptions} from "@apollo/client";
 import {useToast} from "./useToast";
 
 export const useQueryWithToast = <TData = any, TVariables extends OperationVariables = OperationVariables>(
-	query: any,
+	query: DocumentNode,
 	options?: QueryHookOptions<TData, TVariables>
 ) => {
 	const toast = useToast();
