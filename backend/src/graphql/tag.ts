@@ -3,7 +3,7 @@ import {withTransaction} from "../middleware/transaction";
 import {withUser} from "../middleware/auth";
 import {AuthTransactionContext} from "../context";
 import {Tag} from "../models/tag";
-import {EventType} from "../models/event";
+import {MemeLoader} from "../loaders/meme-loader";
 
 export const typeDefs = gql`
 	type Tag {
@@ -11,6 +11,7 @@ export const typeDefs = gql`
 		name: String!
 		createdAt: DateTime!
 		updatedAt: DateTime!
+		memeId: ID!
 		meme: Meme!
 	}
 
@@ -32,5 +33,8 @@ export const resolvers = {
 				return Tag.query(ctx.trx).findById(tagId);
 			})
 		),
+	},
+	Tag: {
+		meme: MemeLoader.resolver("memeId"),
 	},
 };
