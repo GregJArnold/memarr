@@ -1,5 +1,7 @@
 import {FileUploadService} from "../services/fileUpload";
 import {Meme} from "../models/meme";
+import {Tag} from "../models/tag";
+import {Template} from "../models/template";
 import gql from "graphql-tag";
 import {withTransaction} from "../middleware/transaction";
 import {withUser} from "../middleware/auth";
@@ -23,18 +25,6 @@ export const typeDefs = gql`
 		updatedAt: DateTime!
 	}
 
-	type Tag {
-		id: ID!
-		name: String!
-	}
-
-	type Template {
-		id: ID!
-		name: String!
-		description: String
-		textBlocks: [TextBlock!]!
-	}
-
 	type TextBlock {
 		id: ID!
 		key: String!
@@ -48,7 +38,7 @@ export const typeDefs = gql`
 	}
 
 	type Query {
-		memes: [Meme!]!
+		memes(templateId: [ID!], textContent: String, tags: [ID!], allTags: Boolean): [Meme!]!
 		meme(memeId: ID!): Meme
 	}
 
@@ -91,11 +81,44 @@ export const resolvers = {
 	},
 	Query: {
 		memes: withUser(
-			withTransaction(async (_: unknown, __: unknown, {user, trx}: AuthTransactionContext) => {
-				return Meme.query(trx)
-					.where("user_id", user.id)
-					.withGraphFetched("[tags, template, texts.[textBlock]]");
-			})
+			withTransaction(
+				async (
+					_: unknown,
+					{
+						templateId,
+						textContent,
+						tags,
+						allTags,
+					}: {templateId?: string[]; textContent?: string; tags?: string[]; allTags?: boolean},
+					{user, trx}: AuthTransactionContext
+				) => {
+					let query = Meme.query(trx)
+						.where("user_id", user.id)
+						.withGraphFetched("[tags, template, texts.[textBlock]]");
+
+					if (templateId && templateId.length > 0) {
+						query = query.whereIn("template_id", templateId);
+					}
+
+					if (textContent) {
+						query = query.whereExists(
+							Meme.relatedQuery("texts", trx).where("content", "ilike", `%${textContent}%`)
+						);
+					}
+
+					if (tags?.length) {
+						if (allTags) {
+							for (const tagId of tags) {
+								query = query.whereExists(Meme.relatedQuery("tags", trx).where("id", tagId));
+							}
+						} else {
+							query = query.whereExists(Meme.relatedQuery("tags", trx).whereIn("id", tags));
+						}
+					}
+
+					return query;
+				}
+			)
 		),
 		meme: withMeme(async (_, __, ___, meme) => meme),
 	},
