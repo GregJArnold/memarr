@@ -1,18 +1,9 @@
 import {ChangeEvent} from "react";
 import {useMutationWithToast} from "../hooks/useMutationWithToast";
-import {gql} from "@apollo/client";
 import {useNavigate} from "react-router-dom";
-import {Button, Paper} from "@mui/material";
+import {Button} from "@mui/material";
 import {CloudUpload} from "@mui/icons-material";
-
-const UPLOAD_MEME_MUTATION = gql`
-	mutation UploadMeme($file: Upload!) {
-		uploadMeme(file: $file) {
-			id
-			filePath
-		}
-	}
-`;
+import {UPLOAD_MEME_MUTATION} from "../graphql/meme";
 
 export const MemeUpload = () => {
 	const navigate = useNavigate();

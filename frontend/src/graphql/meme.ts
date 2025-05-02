@@ -46,6 +46,15 @@ export const GET_MEMES_QUERY = gql`
 	}
 	${MEME_FRAGMENT}
 `;
+
+export const UPLOAD_MEME_MUTATION = gql`
+	mutation UploadMeme($file: Upload!) {
+		uploadMeme(file: $file) {
+			...MemeFragment @unmask
+		}
+	}
+`;
+
 export const ADD_TAG_MUTATION = gql`
 	mutation AddTag($memeId: ID!, $tagName: String!) {
 		addTag(memeId: $memeId, tagName: $tagName) {
