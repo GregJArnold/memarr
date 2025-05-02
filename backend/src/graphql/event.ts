@@ -9,7 +9,7 @@ export const typeDefs = gql`
 	type Event {
 		id: ID!
 		type: String!
-		description: String!
+		data: JSONObject!
 		createdAt: DateTime!
 		updatedAt: DateTime!
 		acknowledgedAt: DateTime
