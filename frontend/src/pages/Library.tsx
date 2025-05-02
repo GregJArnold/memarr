@@ -72,7 +72,7 @@ export const Library = () => {
 	);
 
 	const handleTemplateChange = useCallback(
-		(_: any, newValue: Template[]) => {
+		(_: unknown, newValue: Template[]) => {
 			const newState = {...searchState, templateIds: newValue.map(t => t.id)};
 			setSearchState(newState);
 			debouncedSearch(newState);
@@ -81,7 +81,7 @@ export const Library = () => {
 	);
 
 	const handleTagChange = useCallback(
-		(_: any, newValue: Tag[]) => {
+		(_: unknown, newValue: Tag[]) => {
 			const newState = {...searchState, tagIds: newValue.map(t => t.id)};
 			setSearchState(newState);
 			debouncedSearch(newState);

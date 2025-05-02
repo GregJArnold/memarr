@@ -1,8 +1,15 @@
-import {useQuery, DocumentNode, OperationVariables, QueryHookOptions} from "@apollo/client";
+import {
+	useQuery,
+	DocumentNode,
+	OperationVariables,
+	QueryHookOptions,
+	TypedDocumentNode,
+} from "@apollo/client";
 import {useToast} from "./useToast";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const useQueryWithToast = <TData = any, TVariables extends OperationVariables = OperationVariables>(
-	query: DocumentNode,
+	query: DocumentNode | TypedDocumentNode<TData, TVariables>,
 	options?: QueryHookOptions<TData, TVariables>
 ) => {
 	const toast = useToast();

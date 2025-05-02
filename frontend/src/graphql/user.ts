@@ -3,7 +3,6 @@ import {BaseObject} from "./base";
 
 export interface User extends BaseObject {
 	email: string;
-	username: string;
 }
 
 export const ME_QUERY = gql`
@@ -11,7 +10,6 @@ export const ME_QUERY = gql`
 		me {
 			id
 			email
-			username
 			createdAt
 			updatedAt
 		}

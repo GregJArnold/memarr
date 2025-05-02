@@ -1,8 +1,16 @@
-import {useMutation, MutationHookOptions, MutationTuple} from "@apollo/client";
+import {
+	useMutation,
+	MutationHookOptions,
+	MutationTuple,
+	TypedDocumentNode,
+	OperationVariables,
+	DocumentNode,
+} from "@apollo/client";
 import {useToast} from "../contexts/ToastContext";
 
-export const useMutationWithToast = <TData = any, TVariables = any>(
-	mutation: any,
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const useMutationWithToast = <TData = any, TVariables extends OperationVariables = OperationVariables>(
+	mutation: DocumentNode | TypedDocumentNode<TData, TVariables>,
 	options?: MutationHookOptions<TData, TVariables>
 ): MutationTuple<TData, TVariables> => {
 	const {addToast} = useToast();
