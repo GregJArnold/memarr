@@ -1,7 +1,5 @@
 import {FileUploadService} from "../services/fileUpload";
 import {Meme} from "../models/meme";
-import {Tag} from "../models/tag";
-import {Template} from "../models/template";
 import gql from "graphql-tag";
 import {withTransaction} from "../middleware/transaction";
 import {withUser} from "../middleware/auth";

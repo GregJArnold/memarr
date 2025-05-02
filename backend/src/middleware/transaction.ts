@@ -2,7 +2,7 @@ import {BaseModel} from "../models/base";
 import {GraphQLFieldResolver, GraphQLResolveInfo} from "graphql";
 import {Transaction} from "objection";
 import {DBError} from "db-errors";
-import retry, {Options} from "async-retry";
+import retry, {Options, RetryFunction} from "async-retry";
 
 const retryOptions: Options = {
 	retries: 10,
@@ -26,15 +26,18 @@ const simpleTransaction = <T>(level: IsolationLevel, callback: TransactionCallba
 		.then(() => BaseModel.transaction(callback));
 
 const retryTransaction = <T>(level: IsolationLevel, callback: TransactionCallback<T>): Promise<T> =>
-	retry<T>(async (bail): Promise<any> => {
-		try {
-			return await simpleTransaction(level, callback);
-		} catch (err) {
-			const {code} = (err instanceof DBError ? err.nativeError : err) as {code: string};
-			if (code === "40001") throw err;
-			bail(err);
-		}
-	}, retryOptions);
+	retry<T>(
+		(async bail => {
+			try {
+				return await simpleTransaction(level, callback);
+			} catch (err) {
+				const {code} = (err instanceof DBError ? err.nativeError : err) as {code: string};
+				if (code === "40001") throw err;
+				bail(err);
+			}
+		}) as RetryFunction<T, unknown>,
+		retryOptions
+	);
 
 export function transaction<T>(level: IsolationLevel, callback: TransactionCallback<T>): Promise<T> {
 	switch (level) {
@@ -64,9 +67,7 @@ export function withTransaction<TParent, TContext, TArgs, TResult>(
 		typeOrResolver = IsolationLevel.Serializable;
 	}
 	return (parent: TParent, args: TArgs, ctx: TContext, info: GraphQLResolveInfo): Promise<TResult> =>
-		transaction(
-			typeOrResolver as IsolationLevel,
-			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			async (trx: Transaction) => resolver!(parent, args, {...ctx, trx}, info)
+		transaction(typeOrResolver as IsolationLevel, async (trx: Transaction) =>
+			resolver!(parent, args, {...ctx, trx}, info)
 		);
 }
