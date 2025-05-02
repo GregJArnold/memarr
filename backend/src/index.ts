@@ -9,6 +9,7 @@ import {createSchema} from "./graphql";
 import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs";
 import {authenticate} from "./middleware/auth";
 import imageRouter from "./routes/image";
+import {LoaderCache} from "./loaders/cache";
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -41,7 +42,11 @@ async function startServer() {
 		json(),
 		graphqlUploadExpress(),
 		expressMiddleware(server, {
-			context: async ({req}) => authenticate(req),
+			context: async ({req}) => {
+				const context = await authenticate(req);
+				context.loaders = new LoaderCache(context);
+				return context;
+			},
 		})
 	);
 

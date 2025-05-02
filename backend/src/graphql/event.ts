@@ -3,6 +3,7 @@ import {withTransaction} from "../middleware/transaction";
 import {withUser} from "../middleware/auth";
 import {AuthTransactionContext} from "../context";
 import {Event} from "../models/event";
+import {MemeLoader} from "../loaders/meme-loader";
 
 export const typeDefs = gql`
 	type Event {
@@ -12,6 +13,7 @@ export const typeDefs = gql`
 		createdAt: DateTime!
 		updatedAt: DateTime!
 		acknowledged: Boolean!
+		memeId: ID!
 		meme: Meme!
 	}
 
@@ -44,5 +46,8 @@ export const resolvers = {
 				}
 			)
 		),
+	},
+	Event: {
+		meme: MemeLoader.resolver("memeId"),
 	},
 };
