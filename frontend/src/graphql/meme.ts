@@ -73,6 +73,7 @@ export const REMOVE_TAG_MUTATION = gql`
 			...MemeFragment @unmask
 		}
 	}
+	${MEME_FRAGMENT}
 `;
 
 export const ADD_TEXT_BLOCK_MUTATION = gql`
